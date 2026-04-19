@@ -14,6 +14,14 @@ export default function Footer() {
           <a href="mailto:daniel@sisupg.com" className="hover:text-white transition">
             daniel@sisupg.com
           </a>
+          <a
+            href="https://brain.sisulabs.llc"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-white transition"
+          >
+            brain
+          </a>
           <span>© {year} Sisu Labs, LLC. All rights reserved.</span>
         </div>
       </div>
