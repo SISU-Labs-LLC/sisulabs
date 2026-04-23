@@ -1,0 +1,12 @@
+# CODEOWNERS — sisulabs
+# All changes require review from a Sisu Labs team member.
+
+# Global owner — all files
+* @summitplummit
+
+# Sensitive paths require explicit review
+**/api/**            @summitplummit
+**/migrations/**     @summitplummit
+**/.env*             @summitplummit
+**/vercel.json       @summitplummit
+**/CLAUDE.md         @summitplummit
