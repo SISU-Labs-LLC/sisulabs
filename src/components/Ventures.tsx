@@ -39,15 +39,15 @@ const ventures: Venture[] = [
     href: "https://couragerises.com",
   },
   {
-    name: "ClearRecord.ai",
+    name: "CleanMyRecord.ai",
     tagline: "AI criminal record expungement.",
     description:
       "Upload your record, get jurisdiction-specific expungement petitions. Automating the paperwork that keeps millions of Americans locked out of jobs and housing.",
     status: "IN PIPELINE",
-    href: "https://clearrecord.ai",
+    href: "https://cleanmyrecord.ai",
   },
   {
-    name: "PermitLock",
+    name: "PermitBot.AI",
     tagline: "AI permit filing for the trades.",
     description:
       "Nationwide permit automation for contractors, electricians, and plumbers. File once, anywhere — without the permit expeditor markup.",
