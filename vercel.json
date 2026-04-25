@@ -6,5 +6,15 @@
     "env": {
       "GITHUB_TOKEN": "@github-token"
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/command",
+      "destination": "https://sisu-command.vercel.app/command"
+    },
+    {
+      "source": "/command/:path*",
+      "destination": "https://sisu-command.vercel.app/command/:path*"
+    }
+  ]
 }
