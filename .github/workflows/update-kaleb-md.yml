@@ -1,0 +1,51 @@
+name: Update KALEB.md
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'vercel.json'
+      - 'src/**'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 7 * * 0'
+
+permissions:
+  contents: write
+
+jobs:
+  update-kaleb:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 50
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Update KALEB.md
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node .github/scripts/update-kaleb.mjs
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add KALEB.md
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "$(cat <<'EOF'
+          docs: auto-update KALEB.md continuity document
+
+          Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+          EOF
+            )"
+            git push
+          fi
