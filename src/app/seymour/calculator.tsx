@@ -1,27 +1,25 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
+import type { RevenueFilter } from "./revenue-section";
 
 const SWIMPLY_FEE = 0.15;
 const CLUB_PRICE = 300;
 const RENTAL_INCREASE = 300;
 const TOTAL_INVESTMENT = 132555;
 
-const operatingCosts = {
-  poolService: { label: "Pool/hot tub weekly service", amount: 175 },
-  yardCare: { label: "Yard care increase", amount: 120 },
-  chemicals: { label: "Chemicals + supplies", amount: 80 },
-  utilities: { label: "Utilities (heat pump, electric)", amount: 150 },
-  insurance: { label: "Liability insurance rider", amount: 75 },
-  marketing: { label: "Marketing + Google Ads", amount: 400 },
-  supplies: { label: "Towels, cleaning, misc", amount: 75 },
-};
+const operatingCosts = [
+  { label: "Pool/hot tub weekly service", amount: 175 },
+  { label: "Yard care (increase from current)", amount: 120 },
+  { label: "Chemicals + supplies", amount: 80 },
+  { label: "Utilities (heat pump, electric)", amount: 150 },
+  { label: "Liability insurance rider", amount: 75 },
+  { label: "Marketing + Google Ads", amount: 400 },
+  { label: "Towels, cleaning, misc", amount: 75 },
+];
 
-const totalMonthlyOps = Object.values(operatingCosts).reduce(
-  (s, c) => s + c.amount,
-  0
-);
+const totalMonthlyOps = operatingCosts.reduce((s, c) => s + c.amount, 0);
 
 function formatMoney(n: number): string {
   return new Intl.NumberFormat("en-US", {
@@ -65,12 +63,15 @@ function AnimatedNumber({
   );
 }
 
-export default function SwimplyCalculator() {
+export default function SwimplyCalculator({
+  filter = "all",
+}: {
+  filter?: RevenueFilter;
+}) {
   const [rate, setRate] = useState(100);
   const [peakBookings, setPeakBookings] = useState(2.2);
   const [directPct, setDirectPct] = useState(45);
   const [winterMembers, setWinterMembers] = useState(6);
-  const [showCosts, setShowCosts] = useState(false);
 
   const avgHours = 2.4;
   const peakMonths = 5;
@@ -102,122 +103,196 @@ export default function SwimplyCalculator() {
     shoulderMonthly * shoulderMonths +
     offPeakMonthly * offPeakMonths;
 
+  // Filter logic
+  const filteredGross =
+    filter === "swimply"
+      ? swimplyAnnual
+      : filter === "winter"
+      ? winterClub
+      : filter === "rental"
+      ? rentalAnnual
+      : swimplyAnnual + winterClub + rentalAnnual;
+
   const grossAnnual = swimplyAnnual + winterClub + rentalAnnual;
   const operatingAnnual = totalMonthlyOps * 12;
-  const netAnnual = grossAnnual - operatingAnnual;
-  const paybackYears = TOTAL_INVESTMENT / netAnnual;
-  const fiveYearNet = netAnnual * 5 - TOTAL_INVESTMENT;
+  const netAnnual = filteredGross - (filter === "all" ? operatingAnnual : 0);
+  const paybackYears =
+    filter === "all"
+      ? TOTAL_INVESTMENT / netAnnual
+      : TOTAL_INVESTMENT / filteredGross;
+  const fiveYearNet =
+    filter === "all"
+      ? netAnnual * 5 - TOTAL_INVESTMENT
+      : filteredGross * 5 - TOTAL_INVESTMENT;
+
+  const showSliders = filter === "all" || filter === "swimply";
+  const showSeasonCards = filter === "all" || filter === "swimply";
+  const showWinterSlider = filter === "all" || filter === "winter";
 
   return (
     <div className="space-y-8">
-      {/* Sliders */}
-      <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 space-y-6">
-        <h4 className="text-sm font-medium text-white/50 uppercase tracking-wider">
-          Adjust Assumptions
-        </h4>
+      {/* Sliders — contextual based on filter */}
+      <AnimatePresence mode="wait">
+        {(showSliders || showWinterSlider) && (
+          <motion.div
+            key={filter}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 space-y-6"
+          >
+            <h4 className="text-sm font-medium text-white/50 uppercase tracking-wider">
+              Adjust Assumptions
+            </h4>
 
-        <SliderControl
-          label="Hourly Rate"
-          value={rate}
-          onChange={setRate}
-          min={75}
-          max={150}
-          step={5}
-          format={(v) => `$${v}/hr`}
-        />
-        <SliderControl
-          label="Peak Bookings per Day"
-          value={peakBookings}
-          onChange={setPeakBookings}
-          min={1}
-          max={4}
-          step={0.1}
-          format={(v) => v.toFixed(1)}
-        />
-        <SliderControl
-          label="Direct Booking %"
-          value={directPct}
-          onChange={setDirectPct}
-          min={0}
-          max={80}
-          step={5}
-          format={(v) => `${v}%`}
-          sublabel="Direct = no Swimply 15% fee"
-        />
-        <SliderControl
-          label="Winter Club Members"
-          value={winterMembers}
-          onChange={setWinterMembers}
-          min={0}
-          max={15}
-          step={1}
-          format={(v) => `${v} @ $300/mo`}
-        />
-      </div>
+            {showSliders && (
+              <>
+                <SliderControl
+                  label="Hourly Rate"
+                  value={rate}
+                  onChange={setRate}
+                  min={75}
+                  max={150}
+                  step={5}
+                  format={(v) => `$${v}/hr`}
+                />
+                <SliderControl
+                  label="Peak Bookings per Day"
+                  value={peakBookings}
+                  onChange={setPeakBookings}
+                  min={1}
+                  max={4}
+                  step={0.1}
+                  format={(v) => v.toFixed(1)}
+                />
+                <SliderControl
+                  label="Direct Booking %"
+                  value={directPct}
+                  onChange={setDirectPct}
+                  min={0}
+                  max={80}
+                  step={5}
+                  format={(v) => `${v}%`}
+                  sublabel="Direct = no Swimply 15% fee"
+                />
+              </>
+            )}
+            {showWinterSlider && (
+              <SliderControl
+                label="Winter Club Members"
+                value={winterMembers}
+                onChange={setWinterMembers}
+                min={0}
+                max={15}
+                step={1}
+                format={(v) => `${v} @ $300/mo`}
+              />
+            )}
 
-      {/* Revenue Visual */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <RevenueCard
-          label="Peak"
-          sublabel="May through Sep"
-          value={peakMonthly}
-          barPct={100}
-        />
-        <RevenueCard
-          label="Shoulder"
-          sublabel="Apr + Oct"
-          value={shoulderMonthly}
-          barPct={(shoulderMonthly / peakMonthly) * 100}
-        />
-        <RevenueCard
-          label="Off-Peak"
-          sublabel="Nov through Mar"
-          value={offPeakMonthly}
-          barPct={(offPeakMonthly / peakMonthly) * 100}
-        />
-      </div>
+            {!showSliders && !showWinterSlider && (
+              <div className="text-center py-4 text-white/40 text-sm">
+                Rental increase is fixed at +$300/month ($3,600/year) upon renovation completion.
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Seasonal Revenue Cards — only for swimply/all */}
+      {showSeasonCards && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <RevenueCard
+            label="Peak"
+            sublabel="May through Sep"
+            value={peakMonthly}
+            barPct={100}
+          />
+          <RevenueCard
+            label="Shoulder"
+            sublabel="Apr + Oct"
+            value={shoulderMonthly}
+            barPct={(shoulderMonthly / peakMonthly) * 100}
+          />
+          <RevenueCard
+            label="Off-Peak"
+            sublabel="Nov through Mar"
+            value={offPeakMonthly}
+            barPct={(offPeakMonthly / peakMonthly) * 100}
+          />
+        </div>
+      )}
 
       {/* Revenue Breakdown Bar */}
       <div className="space-y-3">
         <div className="flex justify-between text-sm">
-          <span className="text-white/50">Annual Revenue Breakdown</span>
+          <span className="text-white/50">
+            {filter === "all" ? "Annual Revenue Breakdown" : `Annual — ${filter === "swimply" ? "Swimply + Direct" : filter === "winter" ? "Winter Club" : "Rental Increase"}`}
+          </span>
           <span className="text-amber-400 font-semibold">
-            {formatMoney(grossAnnual)}
+            {formatMoney(filteredGross)}
           </span>
         </div>
         <div className="h-4 rounded-full overflow-hidden flex bg-white/5">
-          <motion.div
-            className="bg-amber-500 h-full"
-            style={{
-              width: `${(swimplyAnnual / grossAnnual) * 100}%`,
-            }}
-            initial={{ width: 0 }}
-            animate={{ width: `${(swimplyAnnual / grossAnnual) * 100}%` }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          />
-          <motion.div
-            className="bg-purple-500 h-full"
-            style={{
-              width: `${(winterClub / grossAnnual) * 100}%`,
-            }}
-            initial={{ width: 0 }}
-            animate={{ width: `${(winterClub / grossAnnual) * 100}%` }}
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-          />
-          <motion.div
-            className="bg-cyan-500 h-full"
-            style={{
-              width: `${(rentalAnnual / grossAnnual) * 100}%`,
-            }}
-            initial={{ width: 0 }}
-            animate={{ width: `${(rentalAnnual / grossAnnual) * 100}%` }}
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
-          />
+          {(filter === "all" || filter === "swimply") && (
+            <motion.div
+              className="bg-amber-500 h-full"
+              animate={{
+                width: `${(swimplyAnnual / (filter === "all" ? grossAnnual : swimplyAnnual)) * 100}%`,
+              }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            />
+          )}
+          {(filter === "all" || filter === "winter") && (
+            <motion.div
+              className="bg-purple-500 h-full"
+              animate={{
+                width: `${(winterClub / (filter === "all" ? grossAnnual : winterClub)) * 100}%`,
+              }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+            />
+          )}
+          {(filter === "all" || filter === "rental") && (
+            <motion.div
+              className="bg-cyan-500 h-full"
+              animate={{
+                width: `${(rentalAnnual / (filter === "all" ? grossAnnual : rentalAnnual)) * 100}%`,
+              }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+            />
+          )}
         </div>
-        <div className="flex gap-4 text-xs">
-          <Legend color="bg-amber-500" label="Swimply + Direct" value={swimplyAnnual} />
-          <Legend color="bg-purple-500" label="Winter Club" value={winterClub} />
-          <Legend color="bg-cyan-500" label="Rental" value={rentalAnnual} />
+        {filter === "all" && (
+          <div className="flex flex-wrap gap-4 text-xs">
+            <Legend color="bg-amber-500" label="Swimply + Direct" value={swimplyAnnual} />
+            <Legend color="bg-purple-500" label="Winter Club" value={winterClub} />
+            <Legend color="bg-cyan-500" label="Rental" value={rentalAnnual} />
+          </div>
+        )}
+      </div>
+
+      {/* Operating Expenses — ALWAYS VISIBLE */}
+      <div className="rounded-2xl border border-red-500/20 bg-red-500/[0.02] p-5 sm:p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h4 className="text-sm font-medium text-red-400/80 uppercase tracking-wider">
+            Monthly Operating Expenses
+          </h4>
+          <div className="text-lg font-bold text-red-400">
+            {formatMoney(totalMonthlyOps)}/mo
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+          {operatingCosts.map((cost) => (
+            <div key={cost.label} className="flex justify-between items-baseline text-sm py-1">
+              <span className="text-white/40">{cost.label}</span>
+              <span className="text-white/60 font-medium tabular-nums">
+                {formatMoney(cost.amount)}
+              </span>
+            </div>
+          ))}
+        </div>
+        <div className="border-t border-red-500/10 mt-3 pt-3 flex justify-between items-baseline">
+          <span className="text-sm text-white/50 font-medium">Annual total</span>
+          <span className="text-white font-semibold">{formatMoney(operatingAnnual)}/yr</span>
         </div>
       </div>
 
@@ -225,31 +300,33 @@ export default function SwimplyCalculator() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <motion.div
           className="rounded-2xl border border-amber-500/30 bg-amber-500/[0.04] p-6 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
+          layout
         >
-          <div className="text-sm text-white/40">Net Annual Income</div>
+          <div className="text-sm text-white/40">
+            {filter === "all" ? "Net Annual Income" : `${filter === "swimply" ? "Swimply" : filter === "winter" ? "Winter Club" : "Rental"} Annual`}
+          </div>
           <div className="text-3xl font-bold text-amber-400 mt-2">
-            <AnimatedNumber value={netAnnual} />
+            <AnimatedNumber value={filteredGross} />
           </div>
-          <div className="text-xs text-white/30 mt-1">
-            After {formatMoney(operatingAnnual)}/yr operating costs
-          </div>
+          {filter === "all" && (
+            <div className="text-xs text-white/30 mt-1">
+              After {formatMoney(operatingAnnual)}/yr expenses = {formatMoney(netAnnual)} net
+            </div>
+          )}
         </motion.div>
 
         <motion.div
           className="rounded-2xl border border-emerald-500/30 bg-emerald-500/[0.04] p-6 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
+          layout
         >
           <div className="text-sm text-white/40">Investment Payback</div>
           <div className="text-3xl font-bold text-emerald-400 mt-2">
-            {paybackYears.toFixed(1)} years
+            {paybackYears > 0 && paybackYears < 100
+              ? `${paybackYears.toFixed(1)} years`
+              : "N/A"}
           </div>
           <div className="text-xs text-white/30 mt-1">
-            5-year net profit: {formatMoney(fiveYearNet)}
+            5-year net: {formatMoney(fiveYearNet)}
           </div>
         </motion.div>
       </div>
@@ -259,7 +336,7 @@ export default function SwimplyCalculator() {
         <div className="flex justify-between text-xs text-white/40">
           <span>Year 0 (invest)</span>
           <span>Payback</span>
-          <span>Year 5 profit</span>
+          <span>Year 5</span>
         </div>
         <div className="relative h-3 rounded-full bg-white/5 overflow-hidden">
           <motion.div
@@ -268,62 +345,19 @@ export default function SwimplyCalculator() {
             animate={{ width: "100%" }}
             transition={{ duration: 1.5, ease: "easeOut" }}
           />
-          <div
-            className="absolute inset-y-0 w-0.5 bg-white/80"
-            style={{ left: `${(paybackYears / 5) * 100}%` }}
-          />
+          {paybackYears > 0 && paybackYears < 5 && (
+            <motion.div
+              className="absolute inset-y-0 w-0.5 bg-white/90"
+              animate={{ left: `${(paybackYears / 5) * 100}%` }}
+              transition={{ duration: 0.5 }}
+            />
+          )}
         </div>
         <div className="flex justify-between text-xs">
           <span className="text-red-400">{formatMoney(-TOTAL_INVESTMENT)}</span>
           <span className="text-amber-400">$0</span>
           <span className="text-emerald-400">+{formatMoney(fiveYearNet)}</span>
         </div>
-      </div>
-
-      {/* Operating Costs (collapsible) */}
-      <div className="rounded-xl border border-white/10 overflow-hidden">
-        <button
-          onClick={() => setShowCosts(!showCosts)}
-          className="w-full flex justify-between items-center px-5 py-4 text-sm text-white/50 hover:text-white/70 transition-colors"
-        >
-          <span>Monthly Operating Costs</span>
-          <span className="flex items-center gap-2">
-            <span className="text-white/70 font-medium">
-              {formatMoney(totalMonthlyOps)}/mo
-            </span>
-            <svg
-              className={`w-4 h-4 transition-transform ${showCosts ? "rotate-180" : ""}`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </span>
-        </button>
-        {showCosts && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            className="border-t border-white/10 px-5 py-4 space-y-2"
-          >
-            {Object.values(operatingCosts).map((cost) => (
-              <div
-                key={cost.label}
-                className="flex justify-between text-sm"
-              >
-                <span className="text-white/40">{cost.label}</span>
-                <span className="text-white/60">
-                  {formatMoney(cost.amount)}/mo
-                </span>
-              </div>
-            ))}
-            <div className="border-t border-white/10 pt-2 flex justify-between text-sm font-medium">
-              <span className="text-white/60">Annual total</span>
-              <span className="text-white">{formatMoney(operatingAnnual)}</span>
-            </div>
-          </motion.div>
-        )}
       </div>
     </div>
   );
@@ -408,7 +442,6 @@ function RevenueCard({
       <div className="mt-3 h-1.5 rounded-full bg-white/5 overflow-hidden">
         <motion.div
           className="h-full rounded-full bg-amber-500/60"
-          initial={{ width: 0 }}
           animate={{ width: `${Math.min(barPct, 100)}%` }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         />
