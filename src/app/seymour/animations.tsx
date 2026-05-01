@@ -5,11 +5,11 @@ import { motion, useInView } from "framer-motion";
 
 const navItems = [
   { id: "overview", label: "Overview" },
-  { id: "thesis", label: "Thesis" },
-  { id: "improvements", label: "Improvements" },
-  { id: "revenue", label: "Revenue" },
-  { id: "timeline", label: "Timeline" },
-  { id: "value", label: "Value" },
+  { id: "improvements", label: "1. Build" },
+  { id: "revenue", label: "2. Revenue" },
+  { id: "business", label: "3. Numbers" },
+  { id: "timeline", label: "4. Timeline" },
+  { id: "value", label: "5. Bottom Line" },
 ];
 
 export function StickyNav() {
