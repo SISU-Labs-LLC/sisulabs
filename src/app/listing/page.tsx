@@ -1,90 +1,68 @@
 import type { Metadata } from "next";
-import AgentHero from "./agent-hero";
+import PropertyHero from "./property-hero";
+import DashboardTabs from "./dashboard-tabs";
 import ImprovementAdvisor from "./improvement-advisor";
-import MarketingDashboard from "./marketing-dashboard";
 import PricingStrategy from "./pricing-strategy";
 
 export const metadata: Metadata = {
-  title: "Your Listing Presentation — Jordyn Hollingsworth | Compass",
-  description: "Dynamic listing presentation for your home sale",
+  title: "1422 Primrose Ln — Listing Dashboard | Jordyn Hollingsworth",
+  description: "Your live listing dashboard. Metrics, showings, and updates in real time.",
   robots: { index: false, follow: false },
 };
 
 export default function ListingPage() {
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white">
-      {/* Section 1: Your Agent */}
-      <AgentHero />
+    <main className="min-h-screen">
+      {/* Property Hero */}
+      <PropertyHero />
 
-      {/* Section 2: Pre-Listing Recommendations */}
-      <section id="recommendations" className="px-6 py-20 border-t border-white/[0.06]">
+      {/* Dashboard Tabs: Marketing / Agent Bio / Activity */}
+      <section className="px-6 py-10 border-t border-gray-100">
+        <div className="mx-auto max-w-5xl">
+          <DashboardTabs />
+        </div>
+      </section>
+
+      {/* Pre-Listing Recommendations */}
+      <section id="recommendations" className="px-6 py-14 bg-gray-50/50 border-t border-gray-100">
         <div className="mx-auto max-w-4xl">
           <SectionHeader
-            step="02"
-            title="Pre-Listing Recommendations"
-            subtitle="Small investments that increase your sale price. Toggle each to see the projected impact."
+            title="Pre-Listing Investment Guide"
+            subtitle="Recommended improvements to maximize your sale price. Toggle each to see projected impact."
           />
-          <div className="mt-10">
+          <div className="mt-8">
             <ImprovementAdvisor />
           </div>
         </div>
       </section>
 
-      {/* Section 3: Marketing Dashboard */}
-      <section id="marketing" className="px-6 py-20 border-t border-white/[0.06]">
+      {/* Pricing Strategy */}
+      <section id="pricing" className="px-6 py-14 border-t border-gray-100">
         <div className="mx-auto max-w-4xl">
           <SectionHeader
-            step="03"
-            title="Marketing Performance"
-            subtitle="Live metrics across all channels. Updated in real time as your listing gains exposure."
+            title="Pricing Strategy"
+            subtitle="What you list at, what buyers are paying, and what you walk away with."
           />
-          <div className="mt-10">
-            <MarketingDashboard />
-          </div>
-        </div>
-      </section>
-
-      {/* Section 4: Pricing Strategy */}
-      <section id="pricing" className="px-6 py-20 border-t border-white/[0.06]">
-        <div className="mx-auto max-w-4xl">
-          <SectionHeader
-            step="04"
-            title="Pricing Strategy + Net Proceeds"
-            subtitle="What you list at, what you sell for, and what you walk away with."
-          />
-          <div className="mt-10">
+          <div className="mt-8">
             <PricingStrategy />
           </div>
         </div>
       </section>
 
-      <footer className="px-6 py-8 border-t border-white/[0.06] text-center text-xs text-white/15">
-        Compass Real Estate. Jordyn Hollingsworth, Affiliate Broker. 678-448-7669.
+      <footer className="px-6 py-8 border-t border-gray-100 text-center text-xs text-gray-400">
+        Compass Real Estate &middot; Jordyn Hollingsworth, Affiliate Broker &middot; 678-448-7669
       </footer>
     </main>
   );
 }
 
-function SectionHeader({
-  step,
-  title,
-  subtitle,
-}: {
-  step: string;
-  title: string;
-  subtitle: string;
-}) {
+function SectionHeader({ title, subtitle }: { title: string; subtitle: string }) {
   return (
     <div>
-      <div className="inline-flex items-center gap-3">
-        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white/[0.06] border border-white/10 text-white/40 text-xs font-mono">
-          {step}
-        </span>
-        <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-          {title}
-        </h2>
-      </div>
-      <p className="text-sm text-white/40 mt-2 ml-11">{subtitle}</p>
+      <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">
+        {title}
+      </h2>
+      <p className="text-sm text-gray-500 mt-1">{subtitle}</p>
     </div>
   );
 }

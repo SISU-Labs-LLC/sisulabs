@@ -35,7 +35,7 @@ const improvements: Improvement[] = [
     lowReturn: 1.0,
     highReturn: 3.0,
     defaultReturn: 2.0,
-    description: "First impression is everything. Fresh exterior paint on trim + a bold front door color photographs beautifully and signals 'well maintained.'",
+    description: "First impression is everything. Fresh exterior paint on trim + a bold front door color photographs beautifully.",
     timeframe: "1-2 days",
   },
   {
@@ -57,7 +57,7 @@ const improvements: Improvement[] = [
     lowReturn: 1.5,
     highReturn: 3.5,
     defaultReturn: 2.2,
-    description: "If you have hardwood under carpet, revealing and refinishing it is a massive upgrade. Buyers pay a premium for original hardwood in Nashville.",
+    description: "If you have hardwood under carpet, revealing and refinishing it is a massive upgrade. Buyers pay a premium for original hardwood.",
     timeframe: "3-4 days",
   },
   {
@@ -90,7 +90,7 @@ const improvements: Improvement[] = [
     lowReturn: 1.5,
     highReturn: 5.0,
     defaultReturn: 3.0,
-    description: "Staged homes sell 73% faster and for 5-10% more on average. The cost pays for itself multiple times over. Essential for vacant homes.",
+    description: "Staged homes sell 73% faster and for 5-10% more on average. The cost pays for itself multiple times over.",
     timeframe: "1 day setup",
   },
   {
@@ -101,7 +101,7 @@ const improvements: Improvement[] = [
     lowReturn: 3.0,
     highReturn: 8.0,
     defaultReturn: 5.0,
-    description: "Non-negotiable. Sparkling clean is the baseline expectation. Grout, windows, baseboards, oven, everything. Remove 50% of personal items.",
+    description: "Non-negotiable. Sparkling clean is the baseline. Grout, windows, baseboards, oven. Remove 50% of personal items.",
     timeframe: "1-2 days",
   },
 ];
@@ -134,78 +134,68 @@ export default function ImprovementAdvisor() {
   const netGain = totalValueAdd - totalCost;
 
   return (
-    <div className="space-y-8">
-      {/* Summary bar — sticky */}
+    <div className="space-y-6">
+      {/* Summary — sticky */}
       <motion.div
-        className="sticky top-0 z-30 rounded-2xl border border-white/10 bg-black/90 backdrop-blur-xl p-4 flex flex-wrap items-center justify-between gap-4"
+        className="sticky top-0 z-30 rounded-xl border border-gray-200 bg-white/95 backdrop-blur-sm shadow-sm p-4 flex flex-wrap items-center justify-between gap-4"
         layout
       >
         <div className="flex items-baseline gap-6">
           <div>
-            <div className="text-xs text-white/30">You Invest</div>
-            <div className="text-xl font-bold text-white">{formatMoney(totalCost)}</div>
+            <div className="text-[10px] text-gray-400 uppercase tracking-wider">You Invest</div>
+            <div className="text-xl font-semibold text-gray-900">{formatMoney(totalCost)}</div>
           </div>
-          <div className="text-white/20">→</div>
+          <div className="text-gray-300">→</div>
           <div>
-            <div className="text-xs text-white/30">Sale Price Increase</div>
-            <div className="text-xl font-bold text-emerald-400">
-              +{formatMoney(totalValueAdd)}
-            </div>
+            <div className="text-[10px] text-gray-400 uppercase tracking-wider">Sale Price Lift</div>
+            <div className="text-xl font-semibold text-emerald-600">+{formatMoney(totalValueAdd)}</div>
           </div>
         </div>
         <div className="text-right">
-          <div className="text-xs text-white/30">Net Gain</div>
+          <div className="text-[10px] text-gray-400 uppercase tracking-wider">Net Gain</div>
           <motion.div
-            className="text-xl font-bold text-amber-400"
+            className="text-xl font-semibold text-gray-900"
             key={netGain}
-            initial={{ scale: 1.05 }}
+            initial={{ scale: 1.03 }}
             animate={{ scale: 1 }}
           >
             +{formatMoney(netGain)}
           </motion.div>
-          <div className="text-xs text-white/20">
+          <div className="text-[10px] text-gray-400">
             {((totalValueAdd / totalCost) * 100).toFixed(0)}% ROI
           </div>
         </div>
       </motion.div>
 
       {/* Items */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         {improvements.map((item) => {
           const isEnabled = enabled[item.id];
           const returnVal = returns[item.id];
           const valueAdd = Math.round(item.cost * returnVal);
           const pct =
-            ((returnVal - item.lowReturn) / (item.highReturn - item.lowReturn)) *
-            100;
+            ((returnVal - item.lowReturn) / (item.highReturn - item.lowReturn)) * 100;
 
           return (
             <div
               key={item.id}
-              className={`rounded-xl border overflow-hidden transition-all ${
+              className={`rounded-lg border overflow-hidden transition-all ${
                 isEnabled
-                  ? "border-white/15 bg-white/[0.02]"
-                  : "border-white/[0.06] bg-transparent opacity-50"
+                  ? "border-gray-200 bg-white"
+                  : "border-gray-100 bg-gray-50/50 opacity-60"
               }`}
             >
-              <div className="p-4 flex items-start gap-3">
-                {/* Toggle */}
+              <div className="px-4 py-3 flex items-start gap-3">
                 <button
                   onClick={() => toggle(item.id)}
-                  className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors shrink-0 ${
+                  className={`mt-0.5 w-4 h-4 rounded border-2 flex items-center justify-center transition-colors shrink-0 ${
                     isEnabled
-                      ? "border-emerald-400 bg-emerald-400"
-                      : "border-white/20 hover:border-white/40"
+                      ? "border-gray-900 bg-gray-900"
+                      : "border-gray-300 hover:border-gray-400"
                   }`}
                 >
                   {isEnabled && (
-                    <svg
-                      className="w-3 h-3 text-black"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={4}
-                    >
+                    <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                   )}
@@ -214,41 +204,35 @@ export default function ImprovementAdvisor() {
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
                     <div>
-                      <span className="text-xs text-white/20 uppercase tracking-wider">
+                      <span className="text-[10px] text-gray-400 uppercase tracking-wider">
                         {item.category}
                       </span>
-                      <h3 className="text-sm font-medium text-white">
-                        {item.label}
-                      </h3>
+                      <h3 className="text-sm font-medium text-gray-900">{item.label}</h3>
                     </div>
-                    <div className="flex items-baseline gap-3 shrink-0">
-                      <span className="text-xs text-white/30">
-                        {formatMoney(item.cost)}
-                      </span>
-                      <span className="text-white/20">→</span>
-                      <span className="text-sm font-semibold text-emerald-400">
+                    <div className="flex items-baseline gap-2 shrink-0">
+                      <span className="text-xs text-gray-400">{formatMoney(item.cost)}</span>
+                      <span className="text-gray-300">→</span>
+                      <span className="text-sm font-semibold text-emerald-600">
                         +{formatMoney(valueAdd)}
                       </span>
                     </div>
                   </div>
 
-                  <p className="text-xs text-white/30 mt-1 leading-relaxed">
-                    {item.description}
-                  </p>
+                  <p className="text-xs text-gray-500 mt-1">{item.description}</p>
 
                   {isEnabled && (
                     <div className="mt-3 space-y-1">
-                      <div className="flex justify-between text-[10px] text-white/20">
-                        <span>{item.lowReturn}x return</span>
-                        <span className="text-white/40 font-medium">
+                      <div className="flex justify-between text-[10px] text-gray-400">
+                        <span>{item.lowReturn}x</span>
+                        <span className="font-medium text-gray-600">
                           {returnVal.toFixed(1)}x return per $1
                         </span>
-                        <span>{item.highReturn}x return</span>
+                        <span>{item.highReturn}x</span>
                       </div>
                       <div className="relative">
-                        <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                        <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
                           <div
-                            className="h-full rounded-full bg-emerald-500/50 transition-all duration-150"
+                            className="h-full rounded-full bg-gray-900 transition-all duration-150"
                             style={{ width: `${pct}%` }}
                           />
                         </div>
@@ -271,8 +255,7 @@ export default function ImprovementAdvisor() {
                   )}
                 </div>
 
-                {/* Timeframe badge */}
-                <span className="text-[10px] text-white/20 bg-white/[0.04] px-2 py-0.5 rounded-full shrink-0 hidden sm:block">
+                <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full shrink-0 hidden sm:block">
                   {item.timeframe}
                 </span>
               </div>
