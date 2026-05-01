@@ -1,8 +1,25 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const photos = [
+  { src: "https://pi.movoto.com/p/571/3175978_0_juQVNU_p.webp", alt: "Front exterior" },
+  { src: "https://pi.movoto.com/p/571/3175978_0_fIe7IZ_p.webp", alt: "Exterior view" },
+  { src: "https://pi.movoto.com/p/571/3175978_0_yFiYje_p.webp", alt: "Kitchen" },
+  { src: "https://pi.movoto.com/p/571/3175978_0_rMzrzb_p.webp", alt: "Kitchen island" },
+  { src: "https://pi.movoto.com/p/571/3175978_0_FzNAJQ_p.webp", alt: "Living room" },
+  { src: "https://pi.movoto.com/p/571/3175978_0_fM3qjR_p.webp", alt: "Family room" },
+  { src: "https://pi.movoto.com/p/571/3175978_0_REJf26_p.webp", alt: "Primary bedroom" },
+  { src: "https://pi.movoto.com/p/571/3175978_0_vBYnjz_p.webp", alt: "Pool and backyard" },
+];
 
 export default function PropertyHero() {
+  const [currentPhoto, setCurrentPhoto] = useState(0);
+
+  const next = () => setCurrentPhoto((i) => (i + 1) % photos.length);
+  const prev = () => setCurrentPhoto((i) => (i - 1 + photos.length) % photos.length);
+
   return (
     <section className="relative">
       {/* Top bar */}
@@ -25,8 +42,79 @@ export default function PropertyHero() {
         </div>
       </div>
 
+      {/* Photo Gallery */}
+      <div className="relative w-full aspect-[16/7] sm:aspect-[16/6] bg-gray-100 overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={currentPhoto}
+            src={photos[currentPhoto].src}
+            alt={photos[currentPhoto].alt}
+            className="absolute inset-0 w-full h-full object-cover"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          />
+        </AnimatePresence>
+
+        {/* Gradient overlay at bottom for text readability */}
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/40 to-transparent" />
+
+        {/* Navigation arrows */}
+        <button
+          onClick={prev}
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-colors shadow-sm"
+        >
+          <svg className="w-4 h-4 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button
+          onClick={next}
+          className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-colors shadow-sm"
+        >
+          <svg className="w-4 h-4 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
+        {/* Photo counter */}
+        <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-sm text-white text-xs font-medium">
+          {currentPhoto + 1} / {photos.length}
+        </div>
+
+        {/* Dot indicators */}
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+          {photos.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentPhoto(i)}
+              className={`w-1.5 h-1.5 rounded-full transition-all ${
+                i === currentPhoto ? "bg-white w-4" : "bg-white/50 hover:bg-white/70"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Thumbnail strip */}
+      <div className="flex gap-1 p-1 bg-gray-50 overflow-x-auto scrollbar-hide">
+        {photos.map((photo, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentPhoto(i)}
+            className={`shrink-0 w-16 h-12 sm:w-20 sm:h-14 rounded overflow-hidden transition-all ${
+              i === currentPhoto ? "ring-2 ring-gray-900 opacity-100" : "opacity-60 hover:opacity-90"
+            }`}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={photo.src} alt={photo.alt} className="w-full h-full object-cover" />
+          </button>
+        ))}
+      </div>
+
       {/* Property Header */}
-      <div className="px-6 py-10 sm:py-14">
+      <div className="px-6 py-8 sm:py-10">
         <div className="mx-auto max-w-5xl">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
