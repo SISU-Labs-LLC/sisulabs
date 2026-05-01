@@ -146,19 +146,12 @@ export default function PricingStrategy() {
         </div>
       </div>
 
-      {/* Comparable Sales */}
-      <div className="rounded-xl border border-gray-200 bg-white p-5">
-        <h4 className="text-sm font-semibold text-gray-900 mb-4">Recent Comparable Sales</h4>
-        <div className="space-y-0 divide-y divide-gray-100">
-          <CompRow address="1508 Championship Blvd" price={1625000} sqft={4450} dom={11} date="Apr 20" />
-          <CompRow address="305 Haddon Ct" price={1550000} sqft={4180} dom={14} date="Apr 15" />
-          <CompRow address="1610 Riceland Dr" price={1675000} sqft={4680} dom={8} date="Apr 12" />
-          <CompRow address="424 Wild Elm St" price={1510000} sqft={3920} dom={22} date="Apr 8" />
-        </div>
-        <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between text-xs text-gray-500">
-          <span>Avg $/sqft in area: $368</span>
-          <span>Your $/sqft: ${(listPrice / 4305).toFixed(0)}</span>
-        </div>
+      {/* Price position note */}
+      <div className="rounded-lg border border-gray-100 bg-gray-50 p-4 text-center">
+        <p className="text-xs text-gray-500">
+          Your $/sqft at this list price: <span className="font-medium text-gray-700">${(listPrice / 4305).toFixed(0)}/sqft</span>
+          {" "}vs. area avg of <span className="font-medium text-gray-700">$368/sqft</span>
+        </p>
       </div>
     </div>
   );
@@ -175,18 +168,3 @@ function ProceedsLine({ label, value, positive }: { label: string; value: number
   );
 }
 
-function CompRow({ address, price, sqft, dom, date }: { address: string; price: number; sqft: number; dom: number; date: string }) {
-  return (
-    <div className="flex items-center justify-between py-2.5">
-      <div>
-        <span className="text-sm text-gray-700">{address}</span>
-        <span className="text-xs text-gray-400 ml-2">{sqft.toLocaleString()} sqft</span>
-      </div>
-      <div className="flex items-center gap-4">
-        <span className="text-xs text-gray-400">{dom}d</span>
-        <span className="text-sm font-medium text-gray-900">{formatMoney(price)}</span>
-        <span className="text-xs text-gray-400">{date}</span>
-      </div>
-    </div>
-  );
-}

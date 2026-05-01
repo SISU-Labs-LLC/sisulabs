@@ -3,6 +3,7 @@ import PropertyHero from "./property-hero";
 import DashboardTabs from "./dashboard-tabs";
 import ImprovementAdvisor from "./improvement-advisor";
 import PricingStrategy from "./pricing-strategy";
+import CompSelector from "./comp-selector";
 
 export const metadata: Metadata = {
   title: "1422 Primrose Ln — Listing Dashboard | Jordyn Hollingsworth",
@@ -28,7 +29,7 @@ export default function ListingPage() {
         <div className="mx-auto max-w-4xl">
           <SectionHeader
             title="Pre-Listing Investment Guide"
-            subtitle="Recommended improvements to maximize your sale price. Toggle each to see projected impact."
+            subtitle="Toggle improvements on or off to see how they shift your projected sale price."
           />
           <div className="mt-8">
             <ImprovementAdvisor />
@@ -36,8 +37,21 @@ export default function ListingPage() {
         </div>
       </section>
 
+      {/* Comparable Sales */}
+      <section id="comps" className="px-6 py-14 border-t border-gray-100">
+        <div className="mx-auto max-w-4xl">
+          <SectionHeader
+            title="Comparable Sales"
+            subtitle="Recent similar homes that sold near you. These inform your pricing strategy."
+          />
+          <div className="mt-8">
+            <CompSelector />
+          </div>
+        </div>
+      </section>
+
       {/* Pricing Strategy */}
-      <section id="pricing" className="px-6 py-14 border-t border-gray-100">
+      <section id="pricing" className="px-6 py-14 bg-gray-50/50 border-t border-gray-100">
         <div className="mx-auto max-w-4xl">
           <SectionHeader
             title="Pricing Strategy"
