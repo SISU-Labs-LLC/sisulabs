@@ -4,14 +4,14 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const photos = [
-  { src: "https://pi.movoto.com/p/571/3175978_0_juQVNU_p.webp", alt: "Front exterior" },
-  { src: "https://pi.movoto.com/p/571/3175978_0_fIe7IZ_p.webp", alt: "Exterior view" },
-  { src: "https://pi.movoto.com/p/571/3175978_0_yFiYje_p.webp", alt: "Kitchen" },
-  { src: "https://pi.movoto.com/p/571/3175978_0_rMzrzb_p.webp", alt: "Kitchen island" },
-  { src: "https://pi.movoto.com/p/571/3175978_0_FzNAJQ_p.webp", alt: "Living room" },
-  { src: "https://pi.movoto.com/p/571/3175978_0_fM3qjR_p.webp", alt: "Family room" },
-  { src: "https://pi.movoto.com/p/571/3175978_0_REJf26_p.webp", alt: "Primary bedroom" },
-  { src: "https://pi.movoto.com/p/571/3175978_0_vBYnjz_p.webp", alt: "Pool and backyard" },
+  { src: "https://pi.movoto.com/p/571/3175978_0_juQVNU.webp", thumb: "https://pi.movoto.com/p/571/3175978_0_juQVNU_p.webp", alt: "Front exterior" },
+  { src: "https://pi.movoto.com/p/571/3175978_0_fIe7IZ.webp", thumb: "https://pi.movoto.com/p/571/3175978_0_fIe7IZ_p.webp", alt: "Exterior view" },
+  { src: "https://pi.movoto.com/p/571/3175978_0_yFiYje.webp", thumb: "https://pi.movoto.com/p/571/3175978_0_yFiYje_p.webp", alt: "Kitchen" },
+  { src: "https://pi.movoto.com/p/571/3175978_0_rMzrzb.webp", thumb: "https://pi.movoto.com/p/571/3175978_0_rMzrzb_p.webp", alt: "Kitchen island" },
+  { src: "https://pi.movoto.com/p/571/3175978_0_FzNAJQ.webp", thumb: "https://pi.movoto.com/p/571/3175978_0_FzNAJQ_p.webp", alt: "Living room" },
+  { src: "https://pi.movoto.com/p/571/3175978_0_fM3qjR.webp", thumb: "https://pi.movoto.com/p/571/3175978_0_fM3qjR_p.webp", alt: "Family room" },
+  { src: "https://pi.movoto.com/p/571/3175978_0_REJf26.webp", thumb: "https://pi.movoto.com/p/571/3175978_0_REJf26_p.webp", alt: "Primary bedroom" },
+  { src: "https://pi.movoto.com/p/571/3175978_0_vBYnjz.webp", thumb: "https://pi.movoto.com/p/571/3175978_0_vBYnjz_p.webp", alt: "Pool and backyard" },
 ];
 
 export default function PropertyHero() {
@@ -108,7 +108,7 @@ export default function PropertyHero() {
             }`}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={photo.src} alt={photo.alt} className="w-full h-full object-cover" />
+            <img src={photo.thumb} alt={photo.alt} className="w-full h-full object-cover" />
           </button>
         ))}
       </div>
