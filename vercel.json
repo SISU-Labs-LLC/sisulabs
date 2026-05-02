@@ -4,6 +4,10 @@
   "buildCommand": "next build",
   "rewrites": [
     {
+      "source": "/degreeos",
+      "destination": "https://sisu-command.vercel.app/command/degreeos"
+    },
+    {
       "source": "/command",
       "destination": "https://sisu-command.vercel.app/command"
     },
