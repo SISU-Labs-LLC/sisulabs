@@ -4,6 +4,14 @@
   "buildCommand": "next build",
   "rewrites": [
     {
+      "source": "/fleet",
+      "destination": "https://fleetview-seven.vercel.app/fleet"
+    },
+    {
+      "source": "/fleet/:path*",
+      "destination": "https://fleetview-seven.vercel.app/fleet/:path*"
+    },
+    {
       "source": "/degreeos",
       "destination": "https://sisu-command.vercel.app/command/degreeos"
     },
