@@ -22,6 +22,14 @@
     {
       "source": "/command/:path*",
       "destination": "https://sisu-command.vercel.app/command/:path*"
+    },
+    {
+      "source": "/minettebids",
+      "destination": "https://sisuscan.vercel.app/minettebids"
+    },
+    {
+      "source": "/minettebids/:path*",
+      "destination": "https://sisuscan.vercel.app/minettebids/:path*"
     }
   ]
 }
